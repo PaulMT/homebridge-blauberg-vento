@@ -1,15 +1,41 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "BlaubergVento",
   "pluginType": "platform",
   "singular": true,
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "required": true,
-        "default": "Example Dynamic Platform"
+      "devices": {
+        "title": "Devices",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Device Name",
+              "type": "string",
+              "required": true
+            },
+            "ip": {
+              "title": "IP Address",
+              "type": "string",
+              "format": "ipv4",
+              "required": true
+            },
+            "deviceId": {
+              "title": "Device ID",
+              "type": "string",
+              "required": true,
+              "pattern": "^[\\w\\d]{16}$"
+            },
+            "password": {
+              "title": "Password",
+              "type": "string",
+              "required": true,
+              "pattern": "^[\\w\\d]{0,8}$"
+            }
+          }
+        }
       }
     }
   }
