@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "private": false,
   "displayName": "Homebridge Blauberg Vento",
   "name": "homebridge-blauberg-vento",
   "version": "0.5.1-beta.0",
