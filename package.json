@@ -2,7 +2,7 @@
   "private": true,
   "displayName": "Homebridge Blauberg Vento",
   "name": "homebridge-blauberg-vento",
-  "version": "0.5.0",
+  "version": "0.5.1-beta.0",
   "description": "Homebridge plugin for Blauberg Vento Expert",
   "license": "Apache-2.0",
   "repository": {
