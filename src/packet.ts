@@ -24,7 +24,8 @@ export class Packet {
   }
 
   public static speed(deviceId: string, password: string, value: SpeedNumber) {
-    return new Packet(deviceId, password, FuncType.WRITE, [new DataBlock(Parameter.SPEED_NUMBER, value)]);
+    return new Packet(deviceId, password, FuncType.WRITE,
+      [new DataBlock(Parameter.UNIT_ON_OFF, UnitOnOff.ON), new DataBlock(Parameter.SPEED_NUMBER, value)]);
   }
 
   public toBytes(): Uint8Array {

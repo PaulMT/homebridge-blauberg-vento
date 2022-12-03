@@ -4,13 +4,14 @@ import {BlaubergVentoPlatform} from './platform';
 import {VentoExpertClient} from './client';
 import {SpeedNumber, UnitOnOff} from './packet';
 
-const SPEED_1 = 33;
-const SPEED_2 = 67;
-const SPEED_3 = 100;
+// Minimum time difference (in ms) between setActive() and setRotationSpeed() events.
+const MIN_ACTIVE_SPEED_DIFF = 100;
 
 export class VentoExpertAccessory {
   private service: Service;
   private client: VentoExpertClient;
+
+  private lastSpeedChangeTime = 0;
 
   constructor(
     private readonly platform: BlaubergVentoPlatform,
@@ -31,7 +32,12 @@ export class VentoExpertAccessory {
       .onSet(this.setActive.bind(this));
 
     this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
-      .onSet(this.setRotationSpeed.bind(this));
+      .onSet(this.setRotationSpeed.bind(this))
+      .setProps({
+        minValue: 0,
+        maxValue: 3,
+        minStep: 1,
+      });
 
     this.client = new VentoExpertClient(platform, this.device);
   }
@@ -39,24 +45,51 @@ export class VentoExpertAccessory {
   async getActive(): Promise<CharacteristicValue> {
     return this.client.getStatus()
       .then(status => {
-        this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, VentoExpertAccessory.speedFromNumber(status.speed));
+        this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
         return status.active;
       });
   }
 
   async setActive(value: CharacteristicValue) {
-    await this.client.turnOnOff(<UnitOnOff>value);
+    this.isSpeedChange(value)
+      .then(isSpeedChange => {
+        if (!isSpeedChange) {
+          this.client.turnOnOff(<UnitOnOff>value);
+        } else {
+          this.platform.log.info('Ignore set active (speed change)');
+        }
+      });
   }
 
   async setRotationSpeed(value: CharacteristicValue) {
-    await this.client.changeSpeed(VentoExpertAccessory.speedToNumber(value));
+    if (value !== 0) {
+      this.lastSpeedChangeTime = Date.now();
+      await this.client.changeSpeed(<SpeedNumber>value);
+    }
   }
 
-  private static speedFromNumber(value: SpeedNumber): CharacteristicValue {
-    return value === SpeedNumber.SPEED_1 ? SPEED_1 : value === SpeedNumber.SPEED_2 ? SPEED_2 : SPEED_3;
-  }
-
-  private static speedToNumber(value: CharacteristicValue): SpeedNumber {
-    return value <= SPEED_1 ? SpeedNumber.SPEED_1 : value <= SPEED_2 ? SpeedNumber.SPEED_2 : SpeedNumber.SPEED_3;
+  /**
+   * This function is needed to prevent two simultaneous requests to API (turn on and change speed).
+   *
+   * When user changes speed in homekit we receive 2 events: setActive(1) and setRotationSpeed(x).
+   * If we send these 2 requests to API it behaves unstable. So to prevent this we ignore setActive(1) event.
+   *
+   * @param value set active characteristic value
+   * @return true if this setActive event triggered by a speed change; false otherwise
+   * @private
+   */
+  private async isSpeedChange(value: CharacteristicValue): Promise<boolean> {
+    if (value === this.platform.Characteristic.Active.ACTIVE) {
+      return new Promise<boolean>(resolve => {
+        // sleep
+        setTimeout(() => {
+          // check time diff between last speed change
+          const timeDiff = Date.now() - this.lastSpeedChangeTime;
+          resolve(timeDiff <= MIN_ACTIVE_SPEED_DIFF);
+        }, MIN_ACTIVE_SPEED_DIFF / 2);
+      });
+    } else {
+      return false;
+    }
   }
 }

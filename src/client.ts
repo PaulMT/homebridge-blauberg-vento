@@ -32,7 +32,7 @@ export class VentoExpertClient {
   async changeSpeed(value: SpeedNumber) {
     this.platform.log.info('Change speed ->', value);
     await this.send(Packet.speed(this.device.deviceId, this.device.password, value))
-      .then(response => this.platform.log.info('Speed:', response.data[0].value!));
+      .then(response => this.platform.log.info('Speed', response.data[1].value!));
   }
 
   private async send(request: Packet): Promise<Packet> {
