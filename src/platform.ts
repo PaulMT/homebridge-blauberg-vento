@@ -2,6 +2,7 @@ import {API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, P
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 import {VentoExpertAccessory} from './accessory';
+import {Device} from './device';
 
 export class BlaubergVentoPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
@@ -23,19 +24,23 @@ export class BlaubergVentoPlatform implements DynamicPlatformPlugin {
   }
 
   discoverDevices() {
-    for (const device of this.config.devices) {
-      const uuid = this.api.hap.uuid.generate(device.deviceId);
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+    if (this.config.devices) {
+      this.config.devices.forEach(this.configureDevice.bind(this));
+    }
+  }
 
-      if (existingAccessory) {
-        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
-        new VentoExpertAccessory(this, existingAccessory, device);
-      } else {
-        this.log.info('Adding new accessory:', device.name);
-        const accessory = new this.api.platformAccessory(device.name, uuid);
-        new VentoExpertAccessory(this, accessory, device);
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      }
+  configureDevice(device: Device) {
+    const uuid = this.api.hap.uuid.generate(device.deviceId);
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+
+    if (existingAccessory) {
+      this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+      new VentoExpertAccessory(this, existingAccessory, device);
+    } else {
+      this.log.info('Adding new accessory:', device.name);
+      const accessory = new this.api.platformAccessory(device.name, uuid);
+      new VentoExpertAccessory(this, accessory, device);
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 }

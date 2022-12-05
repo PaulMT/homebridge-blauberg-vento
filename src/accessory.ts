@@ -3,6 +3,7 @@ import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
 import {BlaubergVentoPlatform} from './platform';
 import {VentoExpertClient} from './client';
 import {SpeedNumber, UnitOnOff} from './packet';
+import {Device} from './device';
 
 // Minimum time difference (in ms) between setActive() and setRotationSpeed() events.
 const MIN_ACTIVE_SPEED_DIFF = 100;
@@ -16,7 +17,7 @@ export class VentoExpertAccessory {
   constructor(
     private readonly platform: BlaubergVentoPlatform,
     private readonly accessory: PlatformAccessory,
-    private readonly device,
+    private readonly device: Device,
   ) {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Blauberg')
@@ -56,7 +57,7 @@ export class VentoExpertAccessory {
         if (!isSpeedChange) {
           this.client.turnOnOff(<UnitOnOff>value);
         } else {
-          this.platform.log.info('Ignore set active (speed change)');
+          this.platform.log.debug('Ignore set active (speed change)');
         }
       });
   }
