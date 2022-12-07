@@ -28,7 +28,7 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
    - Device Name (name): Accessory name in iOS Home app.
    - IP Address (ip): Your device static IP address.
    - Device ID (deviceId): Your device ID (you can find it in Blauberg Vento V.2 mobile app).
-   - Password (password): Your device password (can be changed in mobile app).
+   - Password (password): Your device password (default 1111, can be changed in mobile app).
 
 ## Features:
 

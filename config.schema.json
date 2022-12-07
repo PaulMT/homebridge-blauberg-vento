@@ -14,25 +14,38 @@
             "name": {
               "title": "Device Name",
               "type": "string",
-              "required": true
+              "required": true,
+              "minLength": 1,
+              "placeholder": "Bedroom Fan",
+              "description": "Accessory name in iOS Home app"
             },
             "ip": {
               "title": "IP Address",
               "type": "string",
               "format": "ipv4",
-              "required": true
+              "required": true,
+              "placeholder": "192.168.1.123",
+              "description": "Your device static IP address"
             },
             "deviceId": {
               "title": "Device ID",
               "type": "string",
               "required": true,
-              "pattern": "^[\\w\\d]{16}$"
+              "pattern": "^[A-Z\\d]{16}$",
+              "minLength": 16,
+              "maxLength": 16,
+              "placeholder": "0123456789ABCDEF",
+              "description": "Your device ID (you can find it in Blauberg Vento V.2 mobile app)"
             },
             "password": {
               "title": "Password",
               "type": "string",
               "required": true,
-              "pattern": "^[\\w\\d]{0,8}$"
+              "pattern": "^[A-z\\d]{1,8}$",
+              "minLength": 1,
+              "maxLength": 8,
+              "default": "1111",
+              "description": "Your device password (default 1111, can be changed in mobile app)"
             }
           }
         }
