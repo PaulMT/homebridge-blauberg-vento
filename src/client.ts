@@ -2,10 +2,12 @@ import {BlaubergVentoPlatform} from './platform';
 import {createSocket} from 'dgram';
 import {Packet, SpeedNumber, UnitOnOff} from './packet';
 import {Device} from './device';
+import Bottleneck from 'bottleneck';
 
 const PORT = 4000;
 
 export class VentoExpertClient {
+  private limiter = new Bottleneck({maxConcurrent: 1});
 
   constructor(private readonly platform: BlaubergVentoPlatform,
               private readonly device: Device) {
@@ -37,7 +39,7 @@ export class VentoExpertClient {
   }
 
   private async send(request: Packet): Promise<Packet> {
-    return new Promise<Packet>(resolve => {
+    return this.limiter.schedule(() => new Promise<Packet>(resolve => {
       const socket = createSocket('udp4');
 
       socket.on('message', (message) => {
@@ -51,6 +53,6 @@ export class VentoExpertClient {
         this.platform.log.debug('[%s] Request:', this.device.deviceId, request);
         socket.send(request.toBytes());
       });
-    });
+    }));
   }
 }
