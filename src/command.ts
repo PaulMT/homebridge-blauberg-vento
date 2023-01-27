@@ -1,5 +1,5 @@
 import {createSocket, Socket} from 'dgram';
-import {DataBlock, FuncType, Packet, Parameter, SpeedNumber, UnitOnOff} from "./packet";
+import {DataBlock, FuncType, Packet, Parameter, SpeedNumber, UnitOnOff} from './packet';
 
 const PORT = 4000;
 

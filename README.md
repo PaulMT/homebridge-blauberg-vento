@@ -51,3 +51,9 @@ According to Blauberg _Connection to a „Smart Home“ system - connection guid
 
 ### 0.5.3
 - First plugin release which allows you to add multiple devices and control them (on/off, change speed).
+
+### 0.7.0
+- Added API bottleneck to prevent simultaneous requests.
+- Added API command timeout.
+- Updated logging, added error handling.
+- Updated config schema.
