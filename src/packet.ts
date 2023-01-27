@@ -15,19 +15,6 @@ export class Packet {
               public readonly data: DataBlock[]) {
   }
 
-  public static status(deviceId: string, password: string) {
-    return new Packet(deviceId, password, FuncType.READ, [new DataBlock(Parameter.UNIT_ON_OFF), new DataBlock(Parameter.SPEED_NUMBER)]);
-  }
-
-  public static onOff(deviceId: string, password: string, value: UnitOnOff) {
-    return new Packet(deviceId, password, FuncType.WRITE, [new DataBlock(Parameter.UNIT_ON_OFF, value)]);
-  }
-
-  public static speed(deviceId: string, password: string, value: SpeedNumber) {
-    return new Packet(deviceId, password, FuncType.WRITE,
-      [new DataBlock(Parameter.UNIT_ON_OFF, UnitOnOff.ON), new DataBlock(Parameter.SPEED_NUMBER, value)]);
-  }
-
   public toBytes(): Uint8Array {
     const bytes = new Uint8Array(MAX_PACKET_SIZE);
     let i = 0;

@@ -37,27 +37,42 @@ export class VentoExpertAccessory {
 
     this.client = new VentoExpertClient(platform, this.device);
 
-    setInterval(() => this.client.getStatus()
-      .then(status => this.service
-        .updateCharacteristic(this.platform.Characteristic.Active, status.active)
-        .updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed)), 5_000);
+    // setInterval(() => this.client.getStatus()
+    //   .then(status => this.service
+    //     .updateCharacteristic(this.platform.Characteristic.Active, status.active)
+    //     .updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed))
+    //   .catch(error => this.platform.log.warn('[%s] Client error:', this.device.deviceId, error.message)), 5_000);
   }
 
   async getActive(): Promise<CharacteristicValue> {
+    this.platform.log.debug('[%s] Get status', this.device.deviceId);
     return this.client.getStatus()
       .then(status => {
+        this.platform.log.debug('[%s] Status:', this.device.deviceId, status);
         this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
         return status.active;
-      });
+      })
+      .catch(this.handleError.bind(this));
   }
 
   async setActive(value: CharacteristicValue) {
-    return this.client.turnOnOff(<UnitOnOff>value);
+    this.platform.log.debug('[%s] Turn on/off ->', this.device.deviceId, value);
+    return this.client.turnOnOff(<UnitOnOff>value)
+      .then(active => this.platform.log.debug('[%s] Turned on/off:', this.device.deviceId, active))
+      .catch(this.handleError.bind(this));
   }
 
   async setRotationSpeed(value: CharacteristicValue) {
     if (value !== 0) {
-      return this.client.changeSpeed(<SpeedNumber>value);
+      this.platform.log.debug('[%s] Change speed ->', this.device.deviceId, value);
+      return this.client.changeSpeed(<SpeedNumber>value)
+        .then(speed => this.platform.log.debug('[%s] Speed changed:', this.device.deviceId, speed))
+        .catch(this.handleError.bind(this));
     }
+  }
+
+  private handleError(error: Error): Promise<CharacteristicValue> {
+    this.platform.log.error('[%s] Client error:', this.device.deviceId, error.message);
+    throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.OPERATION_TIMED_OUT);
   }
 }
