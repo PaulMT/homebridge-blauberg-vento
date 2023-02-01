@@ -6,9 +6,6 @@ const PORT = 4000;
 export class Command {
   private socket: Socket;
 
-  private finished = false;
-  private canceled = false;
-
   private complete?: (value: Packet) => void;
   private fail?: (error: Error) => void;
 
@@ -17,8 +14,8 @@ export class Command {
     private readonly data: DataBlock[],
   ) {
     this.socket = createSocket('udp4')
-      .on('message', this.socketResponse.bind(this))
-      .on('error', this.socketError.bind(this));
+      .on('message', this.response.bind(this))
+      .on('error', this.cancel.bind(this));
   }
 
   public static status() {
@@ -38,33 +35,29 @@ export class Command {
       this.complete = resolve;
       this.fail = reject;
 
-      if (!this.canceled) {
+      try {
         const request = new Packet(deviceId, password, this.func, this.data);
         this.socket.connect(PORT, ip, () => this.socket.send(request.toBytes()));
+      } catch (e) {
+        this.cancel();
       }
     });
   }
 
-  public cancel() {
-    this.canceled = true;
-    if (!this.finished) {
+  public cancel(reason?: Error) {
+    this.close();
+    this.fail?.(reason || new Error());
+  }
+
+  private response(message: Buffer) {
+    this.close();
+    this.complete?.(Packet.fromBytes(message));
+  }
+
+  private close() {
+    try {
       this.socket.close();
-    }
-  }
-
-  private socketResponse(message: Buffer) {
-    this.finished = true;
-    this.socket.close();
-    if (this.complete) {
-      this.complete(Packet.fromBytes(message));
-    }
-  }
-
-  private socketError(error) {
-    this.finished = true;
-    this.socket.close();
-    if (this.fail) {
-      this.fail(error);
+    } catch (e) {// ignore
     }
   }
 }

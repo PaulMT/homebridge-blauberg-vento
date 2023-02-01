@@ -1,4 +1,3 @@
-import {BlaubergVentoPlatform} from './platform';
 import {Command} from './command';
 import {Packet, SpeedNumber, UnitOnOff} from './packet';
 import {Device} from './device';
@@ -9,8 +8,7 @@ const COMMAND_TIMEOUT = 2000;
 export class VentoExpertClient {
   private limiter = new Bottleneck({maxConcurrent: 1});
 
-  constructor(private readonly platform: BlaubergVentoPlatform,
-              private readonly device: Device) {
+  constructor(private readonly device: Device) {
   }
 
   public async getStatus(): Promise<{ active: UnitOnOff; speed: SpeedNumber }> {

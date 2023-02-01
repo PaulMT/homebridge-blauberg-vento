@@ -1,4 +1,4 @@
-import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
+import {CharacteristicValue, Formats, PlatformAccessory, Service} from 'homebridge';
 
 import {BlaubergVentoPlatform} from './platform';
 import {VentoExpertClient} from './client';
@@ -33,9 +33,11 @@ export class VentoExpertAccessory {
         minValue: 0,
         maxValue: 3,
         minStep: 1,
+        unit: 'speed',
+        format: Formats.UINT8,
       });
 
-    this.client = new VentoExpertClient(platform, this.device);
+    this.client = new VentoExpertClient(this.device);
 
     // setInterval(() => this.client.getStatus()
     //   .then(status => this.service
