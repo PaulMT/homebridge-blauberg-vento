@@ -49,6 +49,10 @@ According to Blauberg _Connection to a „Smart Home“ system - connection guid
 
 ## Release notes:
 
+### 0.7.2
+- Fixed issue with continuous timeouts.
+- Show speed as number in Home app instead of percentages.
+
 ### 0.7.1
 - Updated npm packages.
 
