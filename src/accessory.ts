@@ -37,6 +37,15 @@ export class VentoExpertAccessory {
         format: Formats.UINT8,
       });
 
+    this.service.getCharacteristic(this.platform.Characteristic.FilterLifeLevel)
+      .setProps({
+        minValue: 0,
+        maxValue: 181,
+        minStep: 1,
+        unit: 'day',
+        format: Formats.UINT8,
+      });
+
     this.client = new VentoExpertClient(this.device);
 
     // setInterval(() => this.client.getStatus()
@@ -52,6 +61,8 @@ export class VentoExpertAccessory {
       .then(status => {
         this.platform.log.debug('[%s] Status:', this.device.deviceId, status);
         this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
+        this.service.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
+        this.service.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
         return status.active;
       })
       .catch(this.handleError.bind(this));
@@ -74,7 +85,7 @@ export class VentoExpertAccessory {
   }
 
   private handleError(error: Error): Promise<CharacteristicValue> {
-    this.platform.log.error('[%s] Client error:', this.device.deviceId, error.message);
+    this.platform.log.warn('[%s] Client error:', this.device.deviceId, error.message);
     throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.OPERATION_TIMED_OUT);
   }
 }
