@@ -34,6 +34,7 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
 
 - Turning Fan on and off
 - Getting and setting Fan speed
+- Getting and setting Ventilation operation mode
 - Show filter status
 
 ## Supported Models:
@@ -49,6 +50,9 @@ According to Blauberg _Connection to a „Smart Home“ system - connection guid
 - VENTO Expert A50-1 W V.3
 
 ## Release notes:
+
+### 0.9.0
+- Added ventilation operation mode
 
 ### 0.8.0
 - Added filter status

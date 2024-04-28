@@ -117,6 +117,7 @@ export enum Parameter {
   SPEED_NUMBER = 0x02,
   FILTER_TIMER_COUNTDOWN = 0x64,
   FILTER_REPLACEMENT_INDICATOR = 0x88,
+  VENTILATION_OPERATION_MODE = 0xB7,
 }
 
 export enum UnitOnOff {
@@ -129,6 +130,13 @@ export enum SpeedNumber {
   SPEED_2 = 2,
   SPEED_3 = 3
 }
+
+export enum VentilationMode {
+  VENTILATION = 0,
+  HEAT_RECOVERY = 1,
+  SUPPLY = 2
+}
+
 
 export enum FilterReplacementIndicator {
   REQUIRED = 1,
