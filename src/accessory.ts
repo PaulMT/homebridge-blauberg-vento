@@ -38,7 +38,7 @@ export class VentoExpertAccessory {
       });
 
     this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
-    .onSet((value) => this.setMode(value ? VentilationMode.HEAT_RECOVERY : VentilationMode.VENTILATION));
+      .onSet((value) => this.setMode(value ? VentilationMode.HEAT_RECOVERY : VentilationMode.VENTILATION));
 
     this.service.getCharacteristic(this.platform.Characteristic.FilterLifeLevel)
       .setProps({
