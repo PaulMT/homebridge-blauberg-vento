@@ -37,12 +37,8 @@ export class VentoExpertAccessory {
         format: Formats.UINT8,
       });
 
-    this.service.getCharacteristic(this.platform.Characteristic.RotationDirection)
-    .onSet((value) => this.setMode(value ? VentilationMode.SUPPLY : VentilationMode.VENTILATION));
-
     this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
     .onSet((value) => this.setMode(value ? VentilationMode.HEAT_RECOVERY : VentilationMode.VENTILATION));
-
 
     this.service.getCharacteristic(this.platform.Characteristic.FilterLifeLevel)
       .setProps({
@@ -69,7 +65,6 @@ export class VentoExpertAccessory {
         this.platform.log.debug('[%s] Status:', this.device.deviceId, status);
         this.service.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
         this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
-        this.service.updateCharacteristic(this.platform.Characteristic.RotationDirection, status.ventilationMode !== VentilationMode.SUPPLY);
         this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, status.ventilationMode === VentilationMode.HEAT_RECOVERY);
         this.service.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
         return status.active;
@@ -94,10 +89,9 @@ export class VentoExpertAccessory {
   }
 
   async setMode(value: CharacteristicValue) {
-    const mode: VentilationMode = value ? VentilationMode.HEAT_RECOVERY : VentilationMode.VENTILATION; /* Convert SwingMode to Ventilation mode */
-    this.platform.log.debug('[%s] Change mode ->', this.device.deviceId, mode);
-    return this.client.changeMode(<VentilationMode>mode)
-      .then(mode => this.platform.log.debug('[%s] Mode changed:', this.device.deviceId, mode))
+    this.platform.log.debug('[%s] Change mode ->', this.device.deviceId, value);
+    return this.client.changeMode(<VentilationMode>value)
+      .then(value => this.platform.log.debug('[%s] Mode changed:', this.device.deviceId, value))
       .catch(this.handleError.bind(this));
   }
 
