@@ -2,12 +2,13 @@ import {CharacteristicValue, Formats, PlatformAccessory, Service} from 'homebrid
 
 import {BlaubergVentoPlatform} from './platform';
 import {VentoExpertClient} from './client';
-import {SpeedNumber, UnitOnOff} from './packet';
-import {Device} from './device';
+import {AlarmWarningIndicator, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
+import {Device, DeviceStatus} from './device';
 
 export class VentoExpertAccessory {
   private service: Service;
   private client: VentoExpertClient;
+  private deviceStatus!: DeviceStatus;
 
   constructor(
     private readonly platform: BlaubergVentoPlatform,
@@ -37,6 +38,9 @@ export class VentoExpertAccessory {
         format: Formats.UINT8,
       });
 
+    this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
+      .onSet(this.setSwingMode.bind(this));
+
     this.service.getCharacteristic(this.platform.Characteristic.FilterLifeLevel)
       .setProps({
         minValue: 0,
@@ -48,19 +52,31 @@ export class VentoExpertAccessory {
 
     this.client = new VentoExpertClient(this.device);
 
-    // setInterval(() => this.client.getStatus()
-    //   .then(status => this.service
-    //     .updateCharacteristic(this.platform.Characteristic.Active, status.active)
-    //     .updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed))
-    //   .catch(error => this.platform.log.warn('[%s] Client error:', this.device.deviceId, error.message)), 5_000);
+    if (this.device.resetAlarm) {
+      setInterval(() => this.getActive()
+        .then(() => {
+          if (this.deviceStatus.alarm !== AlarmWarningIndicator.NO) {
+            this.platform.log.warn('Device Alarm: ' + this.deviceStatus.alarm + '. Turn Off/On triggered.');
+            this.setActive(UnitOnOff.OFF)
+              .then(() => this.setActive(UnitOnOff.ON));
+          }
+        }), 300_000);
+    }
   }
 
   async getActive(): Promise<CharacteristicValue> {
     this.platform.log.debug('[%s] Get status', this.device.deviceId);
     return this.client.getStatus()
       .then(status => {
+        this.deviceStatus = status;
         this.platform.log.debug('[%s] Status:', this.device.deviceId, status);
-        this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
+        if (status.alarm === AlarmWarningIndicator.NO) {
+          this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
+        } else {
+          this.platform.log.warn('Device Alarm: ' + this.deviceStatus.alarm);
+          this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, new Error('Device Alarm: ' + status.alarm));
+        }
+        this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, status.mode);
         this.service.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
         this.service.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
         return status.active;
@@ -82,6 +98,13 @@ export class VentoExpertAccessory {
         .then(speed => this.platform.log.debug('[%s] Speed changed:', this.device.deviceId, speed))
         .catch(this.handleError.bind(this));
     }
+  }
+
+  async setSwingMode(value: CharacteristicValue) {
+    this.platform.log.debug('[%s] Change mode ->', this.device.deviceId, value);
+    return this.client.changeMode(<VentilationMode>value)
+      .then(value => this.platform.log.debug('[%s] Mode changed:', this.device.deviceId, value))
+      .catch(this.handleError.bind(this));
   }
 
   private handleError(error: Error): Promise<CharacteristicValue> {

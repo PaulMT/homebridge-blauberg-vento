@@ -1,5 +1,5 @@
 import {Command} from './command';
-import {Packet, SpeedNumber, UnitOnOff} from './packet';
+import {Packet, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
 import {Device, DeviceStatus, FilterStatus} from './device';
 import Bottleneck from 'bottleneck';
 
@@ -14,11 +14,13 @@ export class VentoExpertClient {
   public async getStatus(): Promise<DeviceStatus> {
     return this.send(Command.status())
       .then(response => new DeviceStatus(
-        response.data[0].value!,
-        response.data[1].value!,
+        response.data[0].value!, // UNIT_ON_OFF
+        response.data[1].value!, // SPEED_NUMBER
+        response.data[2].value!, // VENTILATION_MODE
+        response.data[3].value!, // ALARM_WARNING_INDICATOR
         new FilterStatus(
-          response.data[2].data![2],
-          response.data[3].value!,
+          response.data[4].data![2], // FILTER_TIMER_COUNTDOWN
+          response.data[5].value!, // FILTER_REPLACEMENT_INDICATOR
         ),
       ));
   }
@@ -30,6 +32,11 @@ export class VentoExpertClient {
 
   public async changeSpeed(value: SpeedNumber): Promise<SpeedNumber> {
     return this.send(Command.speed(value))
+      .then(response => response.data[0].value!);
+  }
+
+  public async changeMode(value: VentilationMode): Promise<VentilationMode> {
+    return this.send(Command.mode(value))
       .then(response => response.data[0].value!);
   }
 

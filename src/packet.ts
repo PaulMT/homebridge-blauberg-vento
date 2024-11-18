@@ -115,6 +115,8 @@ export enum FuncType {
 export enum Parameter {
   UNIT_ON_OFF = 0x01,
   SPEED_NUMBER = 0x02,
+  VENTILATION_MODE = 0xB7,
+  ALARM_WARNING_INDICATOR = 0x83,
   FILTER_TIMER_COUNTDOWN = 0x64,
   FILTER_REPLACEMENT_INDICATOR = 0x88,
 }
@@ -128,6 +130,18 @@ export enum SpeedNumber {
   SPEED_1 = 1,
   SPEED_2 = 2,
   SPEED_3 = 3
+}
+
+export enum VentilationMode {
+  VENTILATION = 0,
+  HEAT_RECOVERY = 1,
+  SUPPLY = 2// Not supported
+}
+
+export enum AlarmWarningIndicator {
+  NO = 0,
+  ALARM = 1,
+  WARNING = 2
 }
 
 export enum FilterReplacementIndicator {

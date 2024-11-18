@@ -19,7 +19,8 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
           "name": "Bedroom Fan",
           "ip": "192.168.1.1",
           "deviceId": "0123456789ABCDEF",
-          "password": "1111"
+          "password": "1111",
+          "resetAlarm": false
         }
       ]
     }
@@ -29,17 +30,21 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
    - IP Address (ip): Your device static IP address.
    - Device ID (deviceId): Your device ID (you can find it in Blauberg Vento V.2 mobile app).
    - Password (password): Your device password (default 1111, can be changed in mobile app).
+   - Reset alarms (resetAlarm): Automatically reset alarms for this device (checked every 5 minutes).
 
 ## Features:
 
 - Turning Fan on and off
 - Getting and setting Fan speed
 - Show filter status
+- Getting and setting ventilation operation mode using swing control (when swing mode is on - heat recovery, off - ventilation)
+- Show speed as "Not Responding" when device alarm received
+- [Optional] Reset alarms automatically (when enabled, plugin will check device alarms every 5 minutes and will turn off and turn on device when alarm occured)
 
 ## Supported Models:
 
 I've only two units of one model (VENTO Expert A100-1 W V.2), so I can't check if it will work fine with other models.
-According to Blauberg _Connection to a „Smart Home“ system - connection guide_ - they all have same API, so this plugin should work fine for all listed bellow.
+According to Blauberg [Connection to a "Smart Home" system guide](https://blaubergventilatoren.net/download/vento-expert-a100-1-s10-w-v2-manual-14758.pdf) - they all have same API, so this plugin should work fine for all listed bellow.
 
 - VENTO Expert A30 W V.2
 - VENTO Expert A50-1 W V.2
@@ -49,6 +54,11 @@ According to Blauberg _Connection to a „Smart Home“ system - connection guid
 - VENTO Expert A50-1 W V.3
 
 ## Release notes:
+
+### 0.9.0
+- Added ventilation operation mode
+- Added device alarm/warning indicator
+- Added automatic alarms reset
 
 ### 0.8.0
 - Added filter status

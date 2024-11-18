@@ -46,6 +46,13 @@
               "maxLength": 8,
               "default": "1111",
               "description": "Your device password (default 1111, can be changed in mobile app)"
+            },
+            "resetAlarm": {
+              "title": "Reset alarms",
+              "type": "boolean",
+              "required": true,
+              "default": false,
+              "description": "Automatically reset alarms for this device (checked every 5 minutes)"
             }
           }
         }

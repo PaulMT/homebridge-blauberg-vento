@@ -1,5 +1,5 @@
 import {createSocket, Socket} from 'dgram';
-import {DataBlock, FuncType, Packet, Parameter, SpeedNumber, UnitOnOff} from './packet';
+import {DataBlock, FuncType, Packet, Parameter, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
 
 const PORT = 4000;
 
@@ -22,6 +22,8 @@ export class Command {
     return new Command(FuncType.READ, [
       new DataBlock(Parameter.UNIT_ON_OFF),
       new DataBlock(Parameter.SPEED_NUMBER),
+      new DataBlock(Parameter.VENTILATION_MODE),
+      new DataBlock(Parameter.ALARM_WARNING_INDICATOR),
       new DataBlock(Parameter.FILTER_TIMER_COUNTDOWN),
       new DataBlock(Parameter.FILTER_REPLACEMENT_INDICATOR),
     ]);
@@ -33,6 +35,10 @@ export class Command {
 
   public static speed(value: SpeedNumber) {
     return new Command(FuncType.WRITE, [new DataBlock(Parameter.SPEED_NUMBER, value)]);
+  }
+
+  public static mode(value: VentilationMode) {
+    return new Command(FuncType.WRITE, [new DataBlock(Parameter.VENTILATION_MODE, value)]);
   }
 
   public async execute(ip: string, deviceId: string, password: string): Promise<Packet> {
