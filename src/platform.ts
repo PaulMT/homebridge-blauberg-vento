@@ -1,12 +1,12 @@
-import {API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service} from 'homebridge';
+import { API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service } from 'homebridge';
 
-import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {VentoExpertAccessory} from './accessory';
-import {Device} from './device';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
+import { VentoExpertAccessory } from './accessory.js';
+import { Device } from './device.js';
 
 export class BlaubergVentoPlatform implements DynamicPlatformPlugin {
-  public readonly Service: typeof Service = this.api.hap.Service;
-  public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+  public readonly Service: typeof Service;
+  public readonly Characteristic: typeof Characteristic;
 
   public readonly accessories: PlatformAccessory[] = [];
 
@@ -15,6 +15,9 @@ export class BlaubergVentoPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    this.Service = api.hap.Service;
+    this.Characteristic = api.hap.Characteristic;
+
     this.api.on('didFinishLaunching', () => this.discoverDevices());
   }
 

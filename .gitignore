@@ -2,6 +2,7 @@
 dist
 
 # ------------- Defaults ------------- #
+.DS_Store
 
 # Logs
 logs
@@ -86,6 +87,7 @@ web_modules/
 
 # Nuxt.js build / generate output
 .nuxt
+dist
 
 # Gatsby files
 .cache/
@@ -118,7 +120,5 @@ web_modules/
 .yarn/build-state.yml
 .pnp.*
 
-# IntelliJ IDEA
-*.iml
-*.ipr
-*.iws
+# Webstorm
+.idea

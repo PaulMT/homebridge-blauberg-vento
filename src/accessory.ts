@@ -1,9 +1,9 @@
-import {CharacteristicValue, Formats, PlatformAccessory, Service} from 'homebridge';
+import { CharacteristicValue, Formats, PlatformAccessory, Service } from 'homebridge';
 
-import {BlaubergVentoPlatform} from './platform';
-import {VentoExpertClient} from './client';
-import {AlarmWarningIndicator, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
-import {Device, DeviceStatus} from './device';
+import { BlaubergVentoPlatform } from './platform.js';
+import { VentoExpertClient } from './client.js';
+import { AlarmWarningIndicator, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
+import { Device, DeviceStatus } from './device.js';
 
 export class VentoExpertAccessory {
   private service: Service;

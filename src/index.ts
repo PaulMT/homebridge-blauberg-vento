@@ -1,8 +1,8 @@
-import {API} from 'homebridge';
+import type { API } from 'homebridge';
 
-import {PLATFORM_NAME} from './settings';
-import {BlaubergVentoPlatform} from './platform';
+import { BlaubergVentoPlatform } from './platform.js';
+import { PLATFORM_NAME } from './settings.js';
 
-export = (api: API) => {
+export default (api: API) => {
   api.registerPlatform(PLATFORM_NAME, BlaubergVentoPlatform);
 };

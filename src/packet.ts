@@ -1,4 +1,4 @@
-import {TextDecoder, TextEncoder} from 'util';
+import { TextDecoder, TextEncoder } from 'util';
 
 const MAX_PACKET_SIZE = 256;
 const PACKET_START = 0xFD;
@@ -10,9 +10,9 @@ const TEXT_DECODER = new TextDecoder();
 export class Packet {
 
   constructor(public readonly deviceId: string,
-              public readonly password: string,
-              public readonly func: FuncType,
-              public readonly data: DataBlock[]) {
+    public readonly password: string,
+    public readonly func: FuncType,
+    public readonly data: DataBlock[]) {
   }
 
   public toBytes(): Uint8Array {
@@ -151,7 +151,7 @@ export enum FilterReplacementIndicator {
 
 export class DataBlock {
   constructor(public readonly parameter: Parameter,
-              public readonly value?: number,
-              public readonly data?: Uint8Array) {
+    public readonly value?: number,
+    public readonly data?: Uint8Array) {
   }
 }

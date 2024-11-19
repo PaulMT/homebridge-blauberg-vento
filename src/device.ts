@@ -1,4 +1,4 @@
-import {AlarmWarningIndicator, FilterReplacementIndicator, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
+import { AlarmWarningIndicator, FilterReplacementIndicator, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
 
 export class Device {
   constructor(

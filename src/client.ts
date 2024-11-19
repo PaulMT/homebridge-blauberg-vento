@@ -1,12 +1,12 @@
-import {Command} from './command';
-import {Packet, SpeedNumber, UnitOnOff, VentilationMode} from './packet';
-import {Device, DeviceStatus, FilterStatus} from './device';
+import { Command } from './command.js';
+import { Packet, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
+import { Device, DeviceStatus, FilterStatus } from './device.js';
 import Bottleneck from 'bottleneck';
 
 const COMMAND_TIMEOUT = 2000;
 
 export class VentoExpertClient {
-  private limiter = new Bottleneck({maxConcurrent: 1});
+  private limiter = new Bottleneck({ maxConcurrent: 1 });
 
   constructor(private readonly device: Device) {
   }
