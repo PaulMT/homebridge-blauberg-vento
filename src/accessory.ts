@@ -4,6 +4,7 @@ import { BlaubergVentoPlatform } from './platform.js';
 import { VentoExpertClient } from './client.js';
 import { AlarmWarningIndicator, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
 import { Device, DeviceStatus } from './device.js';
+import { PLUGIN_VERSION } from './settings.js';
 
 export class VentoExpertAccessory {
   private service: Service;
@@ -20,7 +21,7 @@ export class VentoExpertAccessory {
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Blauberg Ventilatoren GmbH')
       .setCharacteristic(this.platform.Characteristic.Model, 'Vento Expert')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId)
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, platform.api.serverVersion);
+      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, PLUGIN_VERSION);
 
     this.service = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
     this.filterService = this.accessory.getService(this.platform.Service.FilterMaintenance)
