@@ -8,6 +8,7 @@ import { Device, DeviceStatus } from './device.js';
 export class VentoExpertAccessory {
   private service: Service;
   private filterService: Service;
+  private humidityService!: Service;
   private client: VentoExpertClient;
   private deviceStatus!: DeviceStatus;
 
@@ -24,6 +25,13 @@ export class VentoExpertAccessory {
     this.service = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
     this.filterService = this.accessory.getService(this.platform.Service.FilterMaintenance)
       || this.accessory.addService(this.platform.Service.FilterMaintenance);
+
+    if (device.humidity) {
+      this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
+        || this.accessory.addService(this.platform.Service.HumiditySensor);
+
+      this.humidityService.setCharacteristic(this.platform.Characteristic.Name, device.humidityName);
+    }
 
     this.service.setCharacteristic(this.platform.Characteristic.Name, device.name);
 
@@ -71,17 +79,8 @@ export class VentoExpertAccessory {
     this.platform.log.debug('[%s] Get status', this.device.name);
     return this.client.getStatus()
       .then(status => {
-        this.deviceStatus = status;
         this.platform.log.debug('[%s] Status:', this.device.name, status);
-        if (status.alarm === AlarmWarningIndicator.NO) {
-          this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
-        } else {
-          this.platform.log.warn('Device Alarm: ' + this.deviceStatus.alarm);
-          this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, new Error('Device Alarm: ' + status.alarm));
-        }
-        this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, status.mode);
-        this.filterService.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
-        this.filterService.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
+        this.updateCharacteristics(status);
         return status.active;
       })
       .catch(this.handleError.bind(this));
@@ -108,6 +107,25 @@ export class VentoExpertAccessory {
     return this.client.changeMode(<VentilationMode>value)
       .then(value => this.platform.log.debug('[%s] Mode changed:', this.device.name, value))
       .catch(this.handleError.bind(this));
+  }
+
+  private updateCharacteristics(status: DeviceStatus) {
+    this.deviceStatus = status;
+
+    this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, status.mode);
+    this.filterService.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
+    this.filterService.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
+
+    if (this.device.humidity) {
+      this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, status.humidity);
+    }
+
+    if (status.alarm === AlarmWarningIndicator.NO) {
+      this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
+    } else {
+      this.platform.log.warn('Device Alarm: ' + status.alarm);
+      this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, new Error('Device Alarm: ' + status.alarm));
+    }
   }
 
   private handleError(error: Error): Promise<CharacteristicValue> {

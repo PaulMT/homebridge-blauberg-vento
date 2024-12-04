@@ -17,7 +17,7 @@
               "required": true,
               "minLength": 1,
               "placeholder": "Bedroom Fan",
-              "description": "Accessory name in iOS Home app"
+              "description": "Accessory name in Home app"
             },
             "ip": {
               "title": "IP Address",
@@ -53,6 +53,24 @@
               "required": true,
               "default": false,
               "description": "Automatically reset alarms for this device (checked every 5 minutes)"
+            },
+            "humidity": {
+              "title": "Show Humidity Sensor",
+              "type": "boolean",
+              "required": true,
+              "default": false,
+              "description": "Show Humidity Sensor data in Home app"
+            },
+            "humidityName": {
+              "title": "Humidity Sensor Name",
+              "type": "string",
+              "required": true,
+              "minLength": 1,
+              "placeholder": "Bedroom Fan Humidity",
+              "description": "Humidity Sensor name in Home app",
+              "condition": {
+                "functionBody": "return model.devices[arrayIndices].humidity === true;"
+              }
             }
           }
         }

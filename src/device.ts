@@ -7,6 +7,8 @@ export class Device {
     public readonly name: string,
     public readonly password: string,
     public readonly resetAlarm: boolean,
+    public readonly humidity: boolean,
+    public readonly humidityName: string,
   ) {
   }
 }
@@ -15,6 +17,7 @@ export class DeviceStatus {
   constructor(
     public readonly active: UnitOnOff,
     public readonly speed: SpeedNumber,
+    public readonly humidity: number,
     public readonly mode: VentilationMode,
     public readonly alarm: AlarmWarningIndicator,
     public readonly filter: FilterStatus,

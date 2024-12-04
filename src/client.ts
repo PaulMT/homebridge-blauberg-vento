@@ -16,11 +16,12 @@ export class VentoExpertClient {
       .then(response => new DeviceStatus(
         response.data[0].value!, // UNIT_ON_OFF
         response.data[1].value!, // SPEED_NUMBER
-        response.data[2].value!, // VENTILATION_MODE
-        response.data[3].value!, // ALARM_WARNING_INDICATOR
+        response.data[2].value!, // CURRENT_HUMIDITY
+        response.data[3].value!, // VENTILATION_MODE
+        response.data[4].value!, // ALARM_WARNING_INDICATOR
         new FilterStatus(
-          response.data[4].data![2], // FILTER_TIMER_COUNTDOWN
-          response.data[5].value!, // FILTER_REPLACEMENT_INDICATOR
+          response.data[5].data![2], // FILTER_TIMER_COUNTDOWN
+          response.data[6].value!, // FILTER_REPLACEMENT_INDICATOR
         ),
       ));
   }

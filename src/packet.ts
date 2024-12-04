@@ -115,6 +115,7 @@ export enum FuncType {
 export enum Parameter {
   UNIT_ON_OFF = 0x01,
   SPEED_NUMBER = 0x02,
+  CURRENT_HUMIDITY = 0x25,
   VENTILATION_MODE = 0xB7,
   ALARM_WARNING_INDICATOR = 0x83,
   FILTER_TIMER_COUNTDOWN = 0x64,

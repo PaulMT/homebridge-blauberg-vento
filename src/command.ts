@@ -22,6 +22,7 @@ export class Command {
     return new Command(FuncType.READ, [
       new DataBlock(Parameter.UNIT_ON_OFF),
       new DataBlock(Parameter.SPEED_NUMBER),
+      new DataBlock(Parameter.CURRENT_HUMIDITY),
       new DataBlock(Parameter.VENTILATION_MODE),
       new DataBlock(Parameter.ALARM_WARNING_INDICATOR),
       new DataBlock(Parameter.FILTER_TIMER_COUNTDOWN),
