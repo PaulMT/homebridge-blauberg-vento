@@ -6,11 +6,15 @@ import { AlarmWarningIndicator, SpeedNumber, UnitOnOff } from './packet.js';
 import { Device, DeviceStatus } from './device.js';
 import { PLUGIN_VERSION } from './settings.js';
 
+const RESET_ALARM_INTERVAL = 300_000;
+const SET_SPEED_TIMEOUT = 500;
+
 export class VentoExpertAccessory {
   private service: Service;
   private filterService: Service;
   private humidityService!: Service;
   private client: VentoExpertClient;
+  private setSpeedTimeout?: NodeJS.Timeout;
 
   constructor(
     private readonly platform: BlaubergVentoPlatform,
@@ -56,7 +60,7 @@ export class VentoExpertAccessory {
         minValue: 0,
         maxValue: 181,
         minStep: 1,
-        unit: 'day',
+        unit: 'days',
         format: Formats.UINT8,
       });
 
@@ -70,7 +74,7 @@ export class VentoExpertAccessory {
             this.setActive(UnitOnOff.OFF)
               .then(() => this.setActive(UnitOnOff.ON));
           }
-        }), 300_000);
+        }), RESET_ALARM_INTERVAL);
     }
   }
 
@@ -102,12 +106,18 @@ export class VentoExpertAccessory {
   }
 
   async setRotationSpeed(value: CharacteristicValue) {
-    if (value !== 0) {
+    if (value === 0) {
+      return;
+    }
+
+    clearTimeout(this.setSpeedTimeout);
+
+    this.setSpeedTimeout = setTimeout(() => {
       this.platform.log.debug(`[${this.device.name}] Change speed -> ${value}`);
       return this.client.changeSpeed(<SpeedNumber>value)
         .then(speed => this.platform.log.debug(`[${this.device.name}] Speed changed: ${speed}`))
         .catch(this.handleError.bind(this));
-    }
+    }, SET_SPEED_TIMEOUT);
   }
 
   async setSwingMode(value: CharacteristicValue) {
