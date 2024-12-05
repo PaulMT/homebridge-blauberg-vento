@@ -2,7 +2,7 @@ import { CharacteristicGetCallback, CharacteristicValue, Formats, HAPStatus, Pla
 
 import { BlaubergVentoPlatform } from './platform.js';
 import { VentoExpertClient } from './client.js';
-import { AlarmWarningIndicator, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
+import { AlarmWarningIndicator, SpeedNumber, UnitOnOff } from './packet.js';
 import { Device, DeviceStatus } from './device.js';
 import { PLUGIN_VERSION } from './settings.js';
 
@@ -66,7 +66,7 @@ export class VentoExpertAccessory {
       setInterval(() => this.client.getStatus()
         .then(status => {
           if (status.alarm !== AlarmWarningIndicator.NO) {
-            this.platform.log.warn('[%s] Device Alarm: %s. Turn Off/On triggered.', this.device.name, status.alarm);
+            this.platform.log.warn(`[${this.device.name}] Device Alarm: ${status.alarm}. Turn Off/On triggered`);
             this.setActive(UnitOnOff.OFF)
               .then(() => this.setActive(UnitOnOff.ON));
           }
@@ -75,44 +75,47 @@ export class VentoExpertAccessory {
   }
 
   async getActive(callback: CharacteristicGetCallback) {
-    this.platform.log.debug('[%s] Get status', this.device.name);
+    this.platform.log.debug(`[${this.device.name}] Get status`);
     return this.client.getStatus()
       .then(status => {
-        this.platform.log.debug('[%s] Status:', this.device.name, status);
+        this.platform.log.debug(`[${this.device.name}] Status:`, status);
         this.updateCharacteristics(status);
 
         if (status.alarm === AlarmWarningIndicator.NO) {
           callback(null, status.active);
         } else {
-          this.platform.log.warn('[%s] Device Alarm:', this.device.name, status.alarm);
+          this.platform.log.warn(`[${this.device.name}] Device Alarm: ${status.alarm}`);
           callback(HAPStatus.OUT_OF_RESOURCE, status.active);
         }
       })
-      .catch(this.handleError.bind(this));
+      .catch(error => {
+        this.platform.log.warn(`[${this.device.name}] Get status error: ${error.message}`);
+        callback(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
+      });
   }
 
   async setActive(value: CharacteristicValue) {
-    this.platform.log.debug('[%s] Turn on/off ->', this.device.name, value);
+    this.platform.log.debug(`[${this.device.name}] Turn on/off -> ${value}`);
     return this.client.turnOnOff(<UnitOnOff>value)
-      .then(active => this.platform.log.debug('[%s] Turned on/off:', this.device.name, active))
+      .then(active => this.platform.log.debug(`[${this.device.name}] Turned on/off: ${active}`))
       .catch(this.handleError.bind(this));
   }
 
   async setRotationSpeed(value: CharacteristicValue) {
     if (value !== 0) {
-      this.platform.log.debug('[%s] Change speed ->', this.device.name, value);
+      this.platform.log.debug(`[${this.device.name}] Change speed -> ${value}`);
       return this.client.changeSpeed(<SpeedNumber>value)
-        .then(speed => this.platform.log.debug('[%s] Speed changed:', this.device.name, speed))
+        .then(speed => this.platform.log.debug(`[${this.device.name}] Speed changed: ${speed}`))
         .catch(this.handleError.bind(this));
     }
   }
 
   async setSwingMode(value: CharacteristicValue) {
-    this.platform.log.debug('[%s] Change mode ->', this.device.name, value);
+    this.platform.log.debug(`[${this.device.name}] Change mode -> ${value}`);
     return this.client.changeMode(value === this.platform.Characteristic.SwingMode.SWING_ENABLED
       ? this.device.swingModeOn
       : this.device.swingModeOff)
-      .then(value => this.platform.log.debug('[%s] Mode changed:', this.device.name, value))
+      .then(mode => this.platform.log.debug(`[${this.device.name}] Mode changed: ${mode}`))
       .catch(this.handleError.bind(this));
   }
 
@@ -136,7 +139,7 @@ export class VentoExpertAccessory {
   }
 
   private handleError(error: Error): Promise<CharacteristicValue> {
-    this.platform.log.warn('[%s] Client error:', this.device.name, error.message);
+    this.platform.log.warn(`[${this.device.name}] Client error: ${error.message}`);
     throw new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 }
