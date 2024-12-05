@@ -136,7 +136,7 @@ export enum SpeedNumber {
 export enum VentilationMode {
   VENTILATION = 0,
   HEAT_RECOVERY = 1,
-  SUPPLY = 2// Not supported
+  SUPPLY = 2
 }
 
 export enum AlarmWarningIndicator {

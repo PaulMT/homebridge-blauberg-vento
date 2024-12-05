@@ -35,7 +35,7 @@ export class BlaubergVentoPlatform implements DynamicPlatformPlugin {
 
   discoverDevices() {
     if (this.config.devices) {
-      this.config.devices.forEach(this.configureDevice.bind(this));
+      this.config.devices.forEach((device: Partial<Device>) => this.configureDevice(new Device(device)));
     }
 
     for (const [uuid, accessory] of this.accessories) {

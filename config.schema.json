@@ -54,23 +54,66 @@
               "default": false,
               "description": "Automatically reset alarms for this device (checked every 5 minutes)"
             },
+            "swingModeOn": {
+              "title": "Swing Mode On",
+              "type": "integer",
+              "required": true,
+              "default": 1,
+              "description": "Device ventilation mode when swing mode is On in Home app",
+              "oneOf": [
+                {
+                  "title": "Ventilation",
+                  "enum": [
+                    0
+                  ]
+                },
+                {
+                  "title": "Heat Recovery",
+                  "enum": [
+                    1
+                  ]
+                },
+                {
+                  "title": "Supply",
+                  "enum": [
+                    2
+                  ]
+                }
+              ]
+            },
+            "swingModeOff": {
+              "title": "Swing Mode Off",
+              "type": "integer",
+              "required": true,
+              "default": 0,
+              "description": "Device ventilation mode when swing mode is Off in Home app",
+              "oneOf": [
+                {
+                  "title": "Ventilation",
+                  "enum": [
+                    0
+                  ]
+                },
+                {
+                  "title": "Heat Recovery",
+                  "enum": [
+                    1
+                  ]
+                },
+                {
+                  "title": "Supply",
+                  "enum": [
+                    2
+                  ]
+                }
+              ]
+            },
             "humidity": {
               "title": "Show Humidity Sensor",
               "type": "boolean",
               "required": true,
               "default": false,
               "description": "Show Humidity Sensor data in Home app"
-            },
-            "humidityName": {
-              "title": "Humidity Sensor Name",
-              "type": "string",
-              "required": true,
-              "minLength": 1,
-              "placeholder": "Bedroom Fan Humidity",
-              "description": "Humidity Sensor name in Home app",
-              "condition": {
-                "functionBody": "return model.devices[arrayIndices].humidity === true;"
-              }
             }
           }
         }

@@ -30,8 +30,6 @@ export class VentoExpertAccessory {
     if (device.humidity) {
       this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
         || this.accessory.addService(this.platform.Service.HumiditySensor);
-
-      this.humidityService.setCharacteristic(this.platform.Characteristic.Name, device.humidityName);
     }
 
     this.service.setCharacteristic(this.platform.Characteristic.Name, device.name);
@@ -111,19 +109,29 @@ export class VentoExpertAccessory {
 
   async setSwingMode(value: CharacteristicValue) {
     this.platform.log.debug('[%s] Change mode ->', this.device.name, value);
-    return this.client.changeMode(<VentilationMode>value)
+    return this.client.changeMode(value === this.platform.Characteristic.SwingMode.SWING_ENABLED
+      ? this.device.swingModeOn
+      : this.device.swingModeOff)
       .then(value => this.platform.log.debug('[%s] Mode changed:', this.device.name, value))
       .catch(this.handleError.bind(this));
   }
 
   private async updateCharacteristics(status: DeviceStatus) {
     this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, status.speed);
-    this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, status.mode);
     this.filterService.updateCharacteristic(this.platform.Characteristic.FilterLifeLevel, status.filter.life);
     this.filterService.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, status.filter.replace);
 
     if (this.device.humidity) {
       this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, status.humidity);
+    }
+
+    if (status.mode === this.device.swingModeOn) {
+      this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, this.platform.Characteristic.SwingMode.SWING_ENABLED);
+    } else if (status.mode === this.device.swingModeOff) {
+      this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, this.platform.Characteristic.SwingMode.SWING_DISABLED);
+    } else {
+      this.service.updateCharacteristic(this.platform.Characteristic.SwingMode,
+        new this.platform.api.hap.HapStatusError(HAPStatus.INVALID_VALUE_IN_REQUEST));
     }
   }
 

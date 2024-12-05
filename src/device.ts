@@ -1,15 +1,17 @@
 import { AlarmWarningIndicator, FilterReplacementIndicator, SpeedNumber, UnitOnOff, VentilationMode } from './packet.js';
 
 export class Device {
-  constructor(
-    public readonly ip: string,
-    public readonly deviceId: string,
-    public readonly name: string,
-    public readonly password: string,
-    public readonly resetAlarm: boolean,
-    public readonly humidity: boolean,
-    public readonly humidityName: string,
-  ) {
+  public readonly ip!: string;
+  public readonly deviceId!: string;
+  public readonly name!: string;
+  public readonly password!: string;
+  public readonly resetAlarm: boolean = false;
+  public readonly swingModeOn: VentilationMode = VentilationMode.HEAT_RECOVERY;
+  public readonly swingModeOff: VentilationMode = VentilationMode.VENTILATION;
+  public readonly humidity: boolean = false;
+
+  constructor(config?: Partial<Device>) {
+    Object.assign(this, config);
   }
 }
 
