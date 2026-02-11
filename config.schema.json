@@ -47,12 +47,32 @@
               "default": "1111",
               "description": "Your device password (default 1111, can be changed in mobile app)"
             },
-            "resetAlarm": {
+            "resetAlarms": {
               "title": "Reset alarms",
-              "type": "boolean",
+              "type": "integer",
               "required": true,
-              "default": false,
-              "description": "Automatically reset alarms for this device (checked every 5 minutes)"
+              "default": 0,
+              "description": "Automatically reset alarms for this device (checked every 5 minutes)",
+              "oneOf": [
+                {
+                  "title": "No",
+                  "enum": [
+                    0
+                  ]
+                },
+                {
+                  "title": "Alarms only",
+                  "enum": [
+                    1
+                  ]
+                },
+                {
+                  "title": "All (alarms and warnings)",
+                  "enum": [
+                    2
+                  ]
+                }
+              ]
             },
             "swingModeOn": {
               "title": "Swing Mode On",

@@ -5,7 +5,7 @@ export class Device {
   public readonly deviceId!: string;
   public readonly name!: string;
   public readonly password!: string;
-  public readonly resetAlarm: boolean = false;
+  public readonly resetAlarms: AlarmWarningIndicator = AlarmWarningIndicator.NO;
   public readonly swingModeOn: VentilationMode = VentilationMode.HEAT_RECOVERY;
   public readonly swingModeOff: VentilationMode = VentilationMode.VENTILATION;
   public readonly humidity: boolean = false;

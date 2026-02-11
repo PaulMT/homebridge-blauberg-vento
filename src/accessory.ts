@@ -66,11 +66,11 @@ export class VentoExpertAccessory {
 
     this.client = new VentoExpertClient(this.device);
 
-    if (this.device.resetAlarm) {
+    if (this.device.resetAlarms !== AlarmWarningIndicator.NO) {
       setInterval(() => this.client.getStatus()
         .then(status => {
-          if (status.alarm !== AlarmWarningIndicator.NO) {
-            this.platform.log.warn(`[${this.device.name}] Device Alarm: ${status.alarm}. Turn Off/On triggered`);
+          if (status.alarm >= this.device.resetAlarms) {
+            this.platform.log.warn(`[${this.device.name}] Device Alarm: ${AlarmWarningIndicator[status.alarm]}. Turn Off/On triggered`);
             this.setActive(UnitOnOff.OFF)
               .then(() => this.setActive(UnitOnOff.ON));
           }
@@ -83,14 +83,12 @@ export class VentoExpertAccessory {
     return this.client.getStatus()
       .then(status => {
         this.platform.log.debug(`[${this.device.name}] Status:`, status);
-        this.updateCharacteristics(status);
-
-        if (status.alarm === AlarmWarningIndicator.NO) {
-          callback(null, status.active);
-        } else {
-          this.platform.log.warn(`[${this.device.name}] Device Alarm: ${status.alarm}`);
-          callback(HAPStatus.OUT_OF_RESOURCE, status.active);
+        if (status.alarm !== AlarmWarningIndicator.NO) {
+          this.platform.log.warn(`[${this.device.name}] Device Alarm: ${AlarmWarningIndicator[status.alarm]}`);
         }
+
+        this.updateCharacteristics(status);
+        callback(HAPStatus.SUCCESS, status.active);
       })
       .catch(error => {
         this.platform.log.warn(`[${this.device.name}] Get status error: ${error.message}`);

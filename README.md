@@ -22,7 +22,7 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
           "ip": "192.168.1.1",
           "deviceId": "0123456789ABCDEF",
           "password": "1111",
-          "resetAlarm": false,
+          "resetAlarms": 0,
           "swingModeOn": 1,
           "swingModeOff": 0,
           "humidity": false
@@ -35,7 +35,7 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
    - IP Address (ip): Your device static IP address.
    - Device ID (deviceId): Your device ID (you can find it in Blauberg Vento V.2 mobile app).
    - Password (password): Your device password (default 1111, can be changed in mobile app).
-   - Reset alarms (resetAlarm): Automatically reset alarms for this device (checked every 5 minutes).
+   - Reset alarms (resetAlarms): Automatically reset alarms for this device (checked every 5 minutes).
    - Swing Mode On (swingModeOn): Device ventilation mode when swing mode is On in Home app.
    - Swing Mode Off (swingModeOff): Device ventilation mode when swing mode is Off in Home app.
    - Show Humidity Sensor (humidity): Show Humidity Sensor data in Home app.
@@ -47,7 +47,7 @@ This is a Homebridge plugin which allows you to control your Blauberg Vento Expe
 - Show current relative humidity
 - Show filter status
 - Getting and setting ventilation operation mode using swing control
-- Show Fan as "Not Responding" when device alarm received
+- ~~Show Fan as "Not Responding" when device alarm received~~
 - [Optional] Reset alarms automatically (when enabled, plugin will check device alarms every 5 minutes and will turn off and turn on device when alarm occured)
 
 ## Supported Models:
@@ -73,7 +73,7 @@ According to Blauberg [Connection to a "Smart Home" system guide](https://blaube
 
 ### 0.9.0
 - Added ventilation operation mode
-- Added device alarm/warning indicator
+- ~~Added device alarm/warning indicator~~
 - Added automatic alarms reset
 
 ### 0.8.0
