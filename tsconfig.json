@@ -6,10 +6,11 @@
       "ES2022"
     ],
     "rootDir": "src",
-    "module": "ES2022",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "strict": true,
     "declaration": true,
+    "skipLibCheck": true,
     "outDir": "dist",
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,

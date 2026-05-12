@@ -90,7 +90,7 @@ export class Packet {
 
     // Checksum
     const calculated = Packet.checksum(bytes.subarray(2, i));
-    const actual = [bytes[i++], bytes[i++]];
+    const actual = [bytes[i++], bytes[i]];
     if (calculated[0] !== actual[0] || calculated[1] !== actual[1]) {
       throw new Error('Invalid packet checksum. Expected: ' + calculated + '. Actual: ' + actual);
     }
