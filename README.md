@@ -64,6 +64,11 @@ According to Blauberg [Connection to a "Smart Home" system guide](https://blaube
 
 ## Release notes:
 
+### 1.1.0
+- Select automatic alarms reset type
+- Updated npm packages
+- Minor fixes and improvements
+
 ### 1.0.0
 - Added Humidity Sensor
 - Select ventilation mode options

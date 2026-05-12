@@ -2,7 +2,7 @@
   "name": "homebridge-blauberg-vento",
   "displayName": "Homebridge Blauberg Vento",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": false,
   "description": "Homebridge plugin for Blauberg Vento Expert",
   "author": "Paul M.T.",
